@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Configurator</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min. js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -138,10 +138,10 @@
       /* Conditional groups */
       .conditional-group {
         margin-top: 10px;
-        padding:  12px;
-        background: #f9f9f9;
-        border-radius: 6px;
-        border: 1px solid #e0e0e0;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        border: none;
       }
 
       .conditional-group small {
@@ -420,7 +420,6 @@
               <option value="X0">Kundenspezifische Anbauteile Side</option>
             </select>
           </div>
-          <small>(maps to positions 11 & 12: first character → pos11, second → pos12)</small>
         </div>
 
         <div class="conditional-group hidden" id="topRailGroup">
@@ -439,7 +438,6 @@
               <option value="X">Kundenspezifische Anbauteile Top</option>
             </select>
           </div>
-          <small>(maps to position 15)</small>
         </div>
 
         <div class="control-group">
@@ -545,14 +543,47 @@
   };
 
   const overlayDefault = { left: 45, top: 30, width:  20 };
-      // Store both OBJ and MTL data as text
-      const objModelData = {
-        "Rail 1 (64mm)|135":  ``
+      
+      // Repository URLs for 3D models (replace with your actual repository URLs)
+      const modelUrls = {
+        "Rail 1 (64mm)|135": {
+          obj: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/ILLEX13_obj.txt",
+          mtl: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/ILLEX13_mtl.txt"
+        },
+        "Rail 1 (64mm)|105": {
+          obj: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/Rail1_105_obj.txt",
+          mtl: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/Rail1_105_mtl.txt"
+        },
+        "Rail 1 (64mm)|75": {
+          obj: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/Rail1_75_obj.txt",
+          mtl: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/Rail1_75_mtl.txt"
+        },
+        "Rail 2 (94mm)|177": {
+          obj: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/Rail2_177_obj.txt",
+          mtl: "https://raw.githubusercontent.com/yourusername/yourrepo/main/3D_Models/Rail2_177_mtl.txt"
+        }
+        // Add more model mappings as needed
       };
 
-      const mtlModelData = {
-        "Rail 1 (64mm)|135": ``
-      };
+      // Function to load text content from repository URL
+      async function loadFromRepo(url) {
+        try {
+          console.log('Fetching from repository:', url);
+          const response = await fetch(url);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          
+          const text = await response.text();
+          console.log('Successfully fetched from repo, content length:', text.length);
+          
+          return text;
+        } catch (error) {
+          console.error('Error fetching from repository:', url, 'Error:', error.message);
+          return '';
+        }
+      }
 
       // 3D Viewer variables
       let scene3D, camera3D, renderer3D, controls3D, currentModel3D;
@@ -639,6 +670,7 @@
         
         // Show loading
         loading.style.display = 'block';
+        loading.textContent = 'Loading model from repository...';
         
         // Remove previous model
         if (currentModel3D) {
@@ -646,53 +678,84 @@
           currentModel3D = null;
         }
         
-        if (objModelData[key] && objModelData[key].trim() !== '') {
-          try {
-            // Create blob URLs from string content
-            const mtlContent = mtlModelData[key] || createDefaultMTL();
-            const mtlBlob = new Blob([mtlContent], { type: 'text/plain' });
-            const objBlob = new Blob([objModelData[key]], { type: 'text/plain' });
+        // Check if we have URLs for this model
+        if (modelUrls[key]) {
+          const urls = modelUrls[key];
+          console.log('Found model URLs:', urls);
+          
+          // Load both OBJ and MTL files from repository
+          Promise.all([
+            loadFromRepo(urls.obj),
+            loadFromRepo(urls.mtl)
+          ]).then(([objContent, mtlContent]) => {
+            console.log('Files loaded - OBJ length:', objContent?.length, 'MTL length:', mtlContent?.length);
             
-            const mtlUrl = URL.createObjectURL(mtlBlob);
-            const objUrl = URL.createObjectURL(objBlob);
-            
-            // Try to load MTL first
-            const mtlLoader = new THREE.MTLLoader();
-            
-            mtlLoader.load(mtlUrl, (materials) => {
-              materials.preload();
-              
-              // Load OBJ with materials
-              const objLoader = new THREE.OBJLoader();
-              objLoader.setMaterials(materials);
-              
-              objLoader.load(objUrl, (object) => {
-                currentModel3D = object;
-                setup3DModel(object);
+            if (objContent && objContent.trim() !== '') {
+              try {
+                loading.textContent = 'Processing 3D model...';
+                
+                // Use MTL content if available, otherwise use default
+                const finalMtlContent = mtlContent || createDefaultMTL();
+                
+                // Create blob URLs from file content
+                const mtlBlob = new Blob([finalMtlContent], { type: 'text/plain' });
+                const objBlob = new Blob([objContent], { type: 'text/plain' });
+                
+                const mtlUrl = URL.createObjectURL(mtlBlob);
+                const objUrl = URL.createObjectURL(objBlob);
+                
+                console.log('Created blob URLs, loading 3D model...');
+                
+                // Try to load MTL first
+                const mtlLoader = new THREE.MTLLoader();
+                
+                mtlLoader.load(mtlUrl, (materials) => {
+                  materials.preload();
+                  
+                  // Load OBJ with materials
+                  const objLoader = new THREE.OBJLoader();
+                  objLoader.setMaterials(materials);
+                  
+                  objLoader.load(objUrl, (object) => {
+                    currentModel3D = object;
+                    setup3DModel(object);
+                    loading.style.display = 'none';
+                    console.log('3D model loaded successfully!');
+                    
+                    // Cleanup URLs
+                    URL.revokeObjectURL(mtlUrl);
+                    URL.revokeObjectURL(objUrl);
+                    
+                  }, undefined, (error) => {
+                    console.warn('Error loading OBJ with materials, trying without:', error);
+                    loadOBJWithoutMaterials(objUrl, mtlUrl);
+                  });
+                  
+                }, undefined, (error) => {
+                  console.warn('Error loading MTL, using default material:', error);
+                  loadOBJWithoutMaterials(objUrl, mtlUrl);
+                });
+                
+              } catch (error) {
+                console.error('Error processing model files:', error);
+                createFallback3DModel();
                 loading.style.display = 'none';
-                
-                // Cleanup URLs
-                URL.revokeObjectURL(mtlUrl);
-                URL.revokeObjectURL(objUrl);
-                
-              }, undefined, (error) => {
-                console.warn('Error loading OBJ with materials, trying without:', error);
-                loadOBJWithoutMaterials(objUrl, mtlUrl);
-              });
+              }
               
-            }, undefined, (error) => {
-              console.warn('Error loading MTL, using default material:', error);
-              loadOBJWithoutMaterials(objUrl, mtlUrl);
-            });
+            } else {
+              console.log('No OBJ content found, showing test cube');
+              createFallback3DModel();
+              loading.style.display = 'none';
+            }
             
-          } catch (error) {
-            console.error('Error loading model:', error);
+          }).catch((error) => {
+            console.error('Error loading model files from repository:', error);
             createFallback3DModel();
             loading.style.display = 'none';
-          }
+          });
           
         } else {
-          console.log('No model data found, showing test cube');
+          console.log('No model URLs configured for this selection:', key);
           createFallback3DModel();
           loading.style.display = 'none';
         }
@@ -738,7 +801,7 @@
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         
-        const maxSize = Math.max(size. x, size.y, size. z);
+        const maxSize = Math.max(size.x, size.y, size.z);
         if (maxSize > 0) {
           const scale = 4 / maxSize;
           object.position.sub(center.multiplyScalar(scale));
@@ -748,7 +811,7 @@
         scene3D.add(object);
         
         // Reset camera position
-        camera3D. position.set(3, 2, 5);
+        camera3D.position.set(3, 2, 5);
         controls3D.reset();
         
         console.log('3D model setup complete');
