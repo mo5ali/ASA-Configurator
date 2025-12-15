@@ -1,0 +1,32 @@
+Solid Edge-Konvertierung in OBJ
+Datum: Donnerstag,Dezember 11,2025 05:40
+Ausgabedatei: Z:\Allgemein\Temp\MA\OBJ\ILLEX13.obj
+Autor: Unbekannt
+Organisation: Unbekannt
+Ausgangssystem: SOLID EDGE
+
+Hardware:
+Prozessor: Intel(R) Core(TM) i7-9700 CPU @ 3.00GHz
+Betriebssystem: Windows 10 Professional
+Installierter Speicher: 15.84 GB
+
+Software-Informationen:
+Parasolid-Version: 32.0.186
+PSBodyshop-Version: 32.0.127
+OBJ-Adapter-Version: 5.0.79
+Solid Edge-Version: 220.00.09.004 x64
+
+OBJ-Exportoptionen:
+Konstruktionsvolumen exportieren: Aus
+Angezeigte Teile exportieren: Aus
+Konstruktionsbleche exportieren: Aus
+Protokollierung aktivieren:Ein
+Texturen exportieren: Aus
+Einheiten exportieren:Millimeters
+Toleranzwert exportieren:0.100000
+Toleranztyp exportieren:Custom
+Flächenplanwinkelwert exportieren:0.095993
+
+Konvertierungsfortschritt:
+Konvertierungsvorgang ist abgeschlossen
+Zum Konvertieren benötigte Zeit:00 : 00 : 03
