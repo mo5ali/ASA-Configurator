@@ -151,30 +151,158 @@
         font-size: 11px;
       }
 
+      /* Photo gallery styles */
+      .photo-gallery {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+
+      .photo-gallery h4 {
+        margin-bottom: 12px;
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 8px;
+        max-width: 100%;
+      }
+
+      .photo-option {
+        position: relative;
+        aspect-ratio: 1;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+      }
+
+      .photo-option:hover {
+        border-color: #999;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .photo-option.selected {
+        border-color: #4CAF50;
+        border-width: 3px;
+        box-shadow: 0 0 0 1px #4CAF50;
+      }
+
+      .photo-option img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Photo gallery styles */
+      .photo-gallery {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+
+      .photo-gallery h4 {
+        margin-bottom: 12px;
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
+        max-width: 100%;
+      }
+
+      .photo-option {
+        position: relative;
+        aspect-ratio: 1;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+      }
+
+      .photo-option:hover {
+        border-color: #999;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .photo-option.selected {
+        border-color: #4CAF50;
+        border-width: 3px;
+        box-shadow: 0 0 0 1px #4CAF50;
+      }
+
+      .photo-option img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .photo-option .photo-label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 4px 6px;
+        font-size: 10px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .photo-option.selected .photo-label {
+        background: rgba(76, 175, 80, 0.9);
+      }
+
       /* Code display area */
       .code-display {
         background: white;
         padding: 15px;
         border-radius:  6px;
         border:  1px solid #ddd;
-        margin:  20px 0;
+        position: absolute;
+        bottom: 20px;  /* Fixed 60 pixels from bottom of page */
+        width: calc(40% - 40px); /* Stay within left panel width minus padding */
+        margin: 0 0px; /* Maintain side margins within the panel */
       }
 
       .position-grid {
         display: grid;
-        grid-template-columns: repeat(9, 1fr); /* 2 rows of 9 */
+        grid-template-columns: repeat(18, 1fr); /* 2 rows of 9 */
         gap: 6px;
         margin-bottom: 10px;
       }
 
       .position-box {
-        width: 28px;
-        height: 28px;
+        width: 30px;
+        height: 30px;
         border: 1px solid #333;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: bold;
         background-color: #f9f9f9;
         font-family: monospace;
@@ -202,7 +330,7 @@
       .viewer-content {
         flex: 1;
         position: relative;
-        margin:  20px;
+        margin: 20px;
         background: white;
         border-radius: 8px;
         border: 1px solid #ddd;
@@ -452,6 +580,26 @@
           </select>
         </div>
 
+        <!-- Connection Size/Type Photo Gallery - appears when connection is selected -->
+        <div class="conditional-group hidden" id="connectionPhotoGroup">
+          <div class="photo-gallery">
+            <h4>Select Connection Size/Configuration:</h4>
+            <div class="photo-grid" id="connectionPhotoGrid">
+              <!-- Photo options will be populated dynamically based on connection type -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Connection Size/Type Photo Gallery - appears when connection is selected -->
+        <div class="conditional-group hidden" id="connectionPhotoGroup">
+          <div class="photo-gallery">
+            <h4>Select Connection Size/Configuration:</h4>
+            <div class="photo-grid" id="connectionPhotoGrid">
+              <!-- Photo options will be populated dynamically based on connection type -->
+            </div>
+          </div>
+        </div>
+
         <!-- Code display -->
         <div class="code-display">
           <h4 style="margin-bottom: 10px; color: #333;">Product Code Positions:</h4>
@@ -513,23 +661,436 @@
   ];
 
   const sizeOptions = {
-    "Rail 1 (64mm)": ["", "45", "75", "105", "135", "175", "235", "275", "375", "385"],
+    "Rail 1 (64mm)": ["", "4", "7", "10", "13", "17", "23", "27", "37", "38"],
     "AUC-Serie, Standard (Anschluss links)": ["", "177", "257", "367", "467", "567", "927", "275", "375", "385"],
     "AUC-Serie (ehem. AHP, Anschluss rechts)": ["", "177", "257", "367", "467", "567", "927", "275", "375", "385"],
     "ASA-C Serie 64mm (ehem. E-Serie)": ["", "6", "7", "9", "13", "17", "20", "23", "375"],
     "ASA-C Serie 50mm (ehem. Low Line)": ["", "44", "64", "104", "164"]
   };
 
-  const specialImageMap = {
-    "Rail 1 (64mm)|105": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX11 with dims. svg",
-    "Rail 1 (64mm)|45": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX05. png",
-    "Rail 1 (64mm)|75": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX07.png",
-    "Rail 1 (64mm)|135": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX13.png",
-    "Rail 1 (64mm)|175": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX16.png",
-    "Rail 1 (64mm)|235": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX21.png",
-    "Rail 1 (64mm)|375": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX40.png",
-    "Rail 1 (64mm)|385": "Z:\\Allgemein\\Temp\\MA\\VECTORS\\ILLEX36.png"
+  // Size mapping for Rail 1 (64mm) - maps display values to 3-digit codes
+  const rail1SizeMapping = {
+    "4": "004",
+    "7": "007", 
+    "10": "010",
+    "13": "013",
+    "17": "017",
+    "23": "023",
+    "27": "027",
+    "37": "037",
+    "38": "038"
   };
+
+  // Map product codes directly to images - much cleaner!
+  // ============================================================================
+  // 18-CHARACTER POSITION-BASED IMAGE MAPPING SYSTEM  
+  // ============================================================================
+  
+  // Map 18-character position strings to images
+  // Each position corresponds to the 18 position boxes: A1T135NAL0S0000000
+  // '*' means "any character" or "not selected" for that position
+  const productCodeImageMap = {
+
+    // Your existing specific codes (padded to 18 chars)
+    "A1T007PD02U0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T007PD02U0000.png",
+    "A1T004PC2EU0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T004PC2EU0000.png", 
+    "A1T007NA4EU0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T007NA4EU0000.png",
+    "A1T007NC2EU0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T007NC2EU0000.svg",
+    "A1T007ND02U0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T007ND02U0000.png",
+    "A1T007PA4EU0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T007PA4EU0000.png",
+    "A1T007PC2EU0000***": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\A1T007PC2EU0000.png",
+    "A1T004************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX05.png",
+    "A1T004N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX05.png",
+    "A1T004P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX05BP.png",
+    "A1T007************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX07.svg",
+    "A1T007N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX07.svg",
+    "A1T007P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX07BP.svg",
+    "A1T007****U0******": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEXT07.svg",
+    "A1T007N***U0******": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEXT07.svg",
+    "A1T007P***U0******": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEXT07BP.svg",
+    "A1T010************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX11.png",
+    "A1T010N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX11.png",
+    "A1T010P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX11BP.png",
+    "A1T013************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX13.png",
+    "A1T013N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX13.png",
+    "A1T013P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX13BP.png",
+    "A1T017************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX16.png",
+    "A1T017N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX16.png",
+    "A1T017P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX16BP.png",
+
+    "A1T023************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX21_sc.png",
+    "A1T023N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX21_sc.png",
+    "A1T023P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX21BP.png",
+    "A1T023N***U0******": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEXT21.png",
+
+    "A1T027************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX25.png",
+    "A1T027N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX25.png",
+    "A1T027P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX25BP.png",
+
+    "A1T028************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX30.png",
+    "A1T028N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX30.png",
+    "A1T028P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX30BP.png",
+
+    "A1T037************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX40.png",
+    "A1T037N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX40.png",
+    "A1T037P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX40BP.png",
+
+    "A1T038************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX36.png",
+    "A1T038N***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX36.png",
+    "A1T038P***********": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX36BP.png",
+
+
+
+
+    
+    // Pattern examples - exact position matching
+    "A1T***************": "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\VECTORS\\ILLEX16.png",           // Any Rail 1 product
+    "A2T***************": "path/to/rail2_default.png",           // Any Rail 2 product  
+    "A3T***************": "path/to/rail3_default.png",           // Any Rail 3 product
+    "***135************": "path/to/size_135_general.png",        // Any 135mm size
+    "***177************": "path/to/size_177_general.png",        // Any 177mm size
+    "*******A***********": "path/to/ac_drive_general.png",       // AC drive (position 8)
+    "*******D***********": "path/to/dc_brushed_general.png",     // DC brushed (position 8)
+    "*******B***********": "path/to/dc_brushless_general.png",   // DC brushless (position 8)
+    "*******H***********": "path/to/hydraulic_general.png",      // Hydraulic (position 8)
+    "******T************": "path/to/thermal_bypass.png",         // Thermal bypass (position 7)
+    "******P************": "path/to/pressure_bypass.png",        // Pressure bypass (position 7)
+    "******N************": "path/to/no_bypass.png",              // No bypass (position 7)
+    "************M******": "path/to/metric_connection.png",      // Metric connection (position 13)
+    "************G******": "path/to/bsp_connection.png",         // BSP connection (position 13)
+    "************S******": "path/to/sae_connection.png",         // SAE connection (position 13)
+    "**********U0******": "path/to/siderail_U0.png",            // U0 side rail (positions 11-12)
+    "**********L0******": "path/to/siderail_L0.png",            // L0 side rail (positions 11-12)
+    "**************S***": "path/to/toprail_standard.png",       // Standard top rail (position 15)
+    "**************H***": "path/to/toprail_hd.png"              // HD top rail (position 15)
+  };
+
+  // Connection photo gallery options
+  const connectionPhotoOptions = {
+    "G": [ // G - BSP-Gewinde
+      {
+        id: "b01",
+        label: "B01",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B01.png",
+        code: "1"
+      },
+      {
+        id: "b02",
+        label: "B02",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B02.png",
+        code: "2"
+      },
+      {
+        id: "b03",
+        label: "B03",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B03.png",
+        code: "3"
+      },
+      {
+        id: "b04",
+        label: "B04",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B04.png",
+        code: "4"
+      },
+      {
+        id: "b05",
+        label: "B05",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B05.png",
+        code: "5"
+      },
+      {
+        id: "b06",
+        label: "B06",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B06.png",
+        code: "6"
+      },
+      {
+        id: "b07",
+        label: "B07",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B07.png",
+        code: "7"
+      },
+      {
+        id: "b08",
+        label: "B08",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B08.png",
+        code: "8"
+      },
+      {
+        id: "b09",
+        label: "B09",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B09.png",
+        code: "9"
+      },
+      {
+        id: "b10",
+        label: "B10",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B10.png",
+        code: "A"
+      },
+      {
+        id: "b11",
+        label: "B11",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B11.png",
+        code: "B"
+      },
+      {
+        id: "b12",
+        label: "B12",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B12.png",
+        code: "C"
+      },
+      {
+        id: "other",
+        label: "Other",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\other.png",
+        code: "X"
+      }
+    ],
+    "M": [ // M - Metrische-Gewinde (same icons available for all connection types)
+      {
+        id: "b01",
+        label: "B01",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B01.png",
+        code: "1"
+      },
+      {
+        id: "b02",
+        label: "B02",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B02.png",
+        code: "2"
+      },
+      {
+        id: "b03",
+        label: "B03",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B03.png",
+        code: "3"
+      },
+      {
+        id: "b04",
+        label: "B04",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B04.png",
+        code: "4"
+      },
+      {
+        id: "b05",
+        label: "B05",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B05.png",
+        code: "5"
+      },
+      {
+        id: "b06",
+        label: "B06",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B06.png",
+        code: "6"
+      },
+      {
+        id: "b07",
+        label: "B07",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B07.png",
+        code: "7"
+      },
+      {
+        id: "b08",
+        label: "B08",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B08.png",
+        code: "8"
+      },
+      {
+        id: "b09",
+        label: "B09",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B09.png",
+        code: "9"
+      },
+      {
+        id: "b10",
+        label: "B10",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B10.png",
+        code: "A"
+      },
+      {
+        id: "b11",
+        label: "B11",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B11.png",
+        code: "B"
+      },
+      {
+        id: "b12",
+        label: "B12",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B12.png",
+        code: "C"
+      },
+      {
+        id: "other",
+        label: "Other",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\other.png",
+        code: "X"
+      }
+    ],
+    "S": [ // S - SAE-Anschlüsse
+      {
+        id: "b01",
+        label: "B01",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B01.png",
+        code: "1"
+      },
+      {
+        id: "b02",
+        label: "B02",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B02.png",
+        code: "2"
+      },
+      {
+        id: "b03",
+        label: "B03",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B03.png",
+        code: "3"
+      },
+      {
+        id: "b04",
+        label: "B04",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B04.png",
+        code: "4"
+      },
+      {
+        id: "b05",
+        label: "B05",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B05.png",
+        code: "5"
+      },
+      {
+        id: "b06",
+        label: "B06",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B06.png",
+        code: "6"
+      },
+      {
+        id: "b07",
+        label: "B07",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B07.png",
+        code: "7"
+      },
+      {
+        id: "b08",
+        label: "B08",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B08.png",
+        code: "8"
+      },
+      {
+        id: "b09",
+        label: "B09",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B09.png",
+        code: "9"
+      },
+      {
+        id: "b10",
+        label: "B10",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B10.png",
+        code: "A"
+      },
+      {
+        id: "b11",
+        label: "B11",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B11.png",
+        code: "B"
+      },
+      {
+        id: "b12",
+        label: "B12",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B12.png",
+        code: "C"
+      },
+      {
+        id: "other",
+        label: "Other",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\other.png",
+        code: "X"
+      }
+    ],
+    "U": [ // U - UNF-Gewinde
+      {
+        id: "b01",
+        label: "B01",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B01.png",
+        code: "1"
+      },
+      {
+        id: "b02",
+        label: "B02",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B02.png",
+        code: "2"
+      },
+      {
+        id: "b03",
+        label: "B03",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B03.png",
+        code: "3"
+      },
+      {
+        id: "b04",
+        label: "B04",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B04.png",
+        code: "4"
+      },
+      {
+        id: "b05",
+        label: "B05",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B05.png",
+        code: "5"
+      },
+      {
+        id: "b06",
+        label: "B06",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B06.png",
+        code: "6"
+      },
+      {
+        id: "b07",
+        label: "B07",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B07.png",
+        code: "7"
+      },
+      {
+        id: "b08",
+        label: "B08",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B08.png",
+        code: "8"
+      },
+      {
+        id: "b09",
+        label: "B09",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B09.png",
+        code: "9"
+      },
+      {
+        id: "b10",
+        label: "B10",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B10.png",
+        code: "A"
+      },
+      {
+        id: "b11",
+        label: "B11",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B11.png",
+        code: "B"
+      },
+      {
+        id: "b12",
+        label: "B12",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\B12.png",
+        code: "C"
+      },
+      {
+        id: "other",
+        label: "Other",
+        image: "Z:\\Allgemein\\Temp\\MA\\ASA-Configurator\\ICONS\\other.png",
+        code: "X"
+      }
+    ]
+  };
+
+  // Variable to store selected connection photo option
+  let selectedConnectionPhoto = null;
 
   const anschlussMOverlaySrc = "file:///Z:/Allgemein/Temp/MA/VECTORS/ILLZET53G26.png";
 
@@ -620,36 +1181,61 @@
         scene3D = new THREE.Scene();
         scene3D.background = new THREE.Color(BACKGROUND_COLOR);
         
-        // Create camera
-        camera3D = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-        camera3D.position. set(3, 2, 5);
+        // Create orthographic camera for engineering view
+        const aspect = container.offsetWidth / container.offsetHeight;
+        const frustumSize = 6;
+        camera3D = new THREE.OrthographicCamera(
+          (frustumSize * aspect) / -2, (frustumSize * aspect) / 2,
+          frustumSize / 2, frustumSize / -2,
+          0.1, 1000
+        );
+        // Set isometric position: equal angles to X, Y, Z axes
+        camera3D.position.set(5, 5, 5);
+        camera3D.lookAt(0, 0, 0);
         
         // Create renderer
         renderer3D = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         renderer3D.setSize(container.offsetWidth, container.offsetHeight);
         renderer3D.setPixelRatio(window.devicePixelRatio);
         
-        // Add OrbitControls (pan, rotate, zoom) - PROPER CAD CONTROLS! 
+        // Add OrbitControls with completely free rotation - UNLIMITED CAD CONTROLS! 
         controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
         controls3D.enableDamping = true;
         controls3D.dampingFactor = 0.05;
-        controls3D.screenSpacePanning = false;
-        controls3D.minDistance = 0.1;
-        controls3D. maxDistance = 100;
-        controls3D.maxPolarAngle = Math.PI;
+        controls3D.screenSpacePanning = true; // Better for CAD
+        controls3D.minZoom = 0.1;
+        controls3D.maxZoom = 10;
+        
+        // FORCE completely free rotation by explicitly setting unlimited ranges
+        controls3D.enableRotate = true;
+        controls3D.minPolarAngle = -Infinity;  // Allow infinite vertical rotation
+        controls3D.maxPolarAngle = Infinity;   // Allow infinite vertical rotation
+        controls3D.minAzimuthAngle = -Infinity; // Allow infinite horizontal rotation
+        controls3D.maxAzimuthAngle = Infinity;  // Allow infinite horizontal rotation
+        
+        // Disable any auto-rotation limits and constraints
+        controls3D.enablePan = true;
+        controls3D.enableZoom = true;
+        controls3D.autoRotate = false;
+        controls3D.target.set(0, 0, 0); // Keep target at origin
         
         // Add professional lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene3D.add(ambientLight);
         
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
-        directionalLight.position. set(5, 10, 7);
+        directionalLight.position.set(5, 10, 7);
         scene3D.add(directionalLight);
         
-        // Handle canvas resize
+        // Handle canvas resize for orthographic camera
         const resizeObserver = new ResizeObserver(() => {
           const rect = container.getBoundingClientRect();
-          camera3D.aspect = rect.width / rect.height;
+          const aspect = rect.width / rect.height;
+          const frustumSize = 6;
+          camera3D.left = (frustumSize * aspect) / -2;
+          camera3D.right = (frustumSize * aspect) / 2;
+          camera3D.top = frustumSize / 2;
+          camera3D.bottom = frustumSize / -2;
           camera3D.updateProjectionMatrix();
           renderer3D.setSize(rect.width, rect.height);
         });
@@ -810,8 +1396,9 @@
         
         scene3D.add(object);
         
-        // Reset camera position
-        camera3D.position.set(3, 2, 5);
+        // Reset to isometric position
+        camera3D.position.set(5, 5, 5);
+        camera3D.lookAt(0, 0, 0);
         controls3D.reset();
         
         console.log('3D model setup complete');
@@ -823,7 +1410,9 @@
         currentModel3D = new THREE. Mesh(geometry, material);
         scene3D.add(currentModel3D);
         
-        camera3D.position.set(3, 2, 5);
+        // Reset to isometric position
+        camera3D.position.set(5, 5, 5);
+        camera3D.lookAt(0, 0, 0);
         controls3D.reset();
         
         console.log('Fallback cube created');
@@ -874,8 +1463,64 @@
           placeholder2: document.getElementById('placeholder2').value,
           sideRail:  (document.getElementById('sideRail') ?  document.getElementById('sideRail').value : ""),
           topRail: (document.getElementById('topRail') ? document.getElementById('topRail').value : ""),
-          anschlussart: (document.getElementById('anschlussart') ? document.getElementById('anschlussart').value : "")
+          anschlussart: (document.getElementById('anschlussart') ? document.getElementById('anschlussart').value : ""),
+          connectionPhoto: selectedConnectionPhoto
         };
+      }
+
+      // Photo gallery functions
+      function updateConnectionPhotoGallery() {
+        const anschlussart = document.getElementById('anschlussart').value;
+        const photoGroup = document.getElementById('connectionPhotoGroup');
+        const photoGrid = document.getElementById('connectionPhotoGrid');
+        
+        // Reset selection
+        selectedConnectionPhoto = null;
+        
+        if (anschlussart && anschlussart !== "0" && anschlussart !== "") {
+          // Show photo gallery
+          photoGroup.classList.remove('hidden');
+          
+          // Clear existing options
+          photoGrid.innerHTML = '';
+          
+          // Get options for this connection type
+          const options = connectionPhotoOptions[anschlussart] || [];
+          
+          options.forEach(option => {
+            const photoDiv = document.createElement('div');
+            photoDiv.className = 'photo-option';
+            photoDiv.dataset.optionId = option.id;
+            photoDiv.dataset.code = option.code;
+            
+            photoDiv.innerHTML = `
+              <img src="${option.image}" alt="${option.label}" loading="lazy" />
+            `;
+            
+            photoDiv.addEventListener('click', () => selectConnectionPhoto(option, photoDiv));
+            photoGrid.appendChild(photoDiv);
+          });
+        } else {
+          // Hide photo gallery for "kein Anschluss" or empty selection
+          photoGroup.classList.add('hidden');
+        }
+        
+        // Update product code since selection changed
+        updateProductCode();
+      }
+
+      function selectConnectionPhoto(option, photoElement) {
+        // Remove previous selection
+        document.querySelectorAll('.photo-option.selected').forEach(el => {
+          el.classList.remove('selected');
+        });
+        
+        // Select new option
+        photoElement.classList.add('selected');
+        selectedConnectionPhoto = option;
+        
+        // Update product code
+        updateProductCode();
       }
 
       function initializeDropdowns() {
@@ -895,6 +1540,9 @@
             if (id === 'DriveType') {
               updateDriveDependent();
             }
+            if (id === 'anschlussart') {
+              updateConnectionPhotoGallery();
+            }
             updateProductCode();
           });
         });
@@ -904,6 +1552,7 @@
 
         handleProductFamilyChange();
         updateDriveDependent();
+        updateConnectionPhotoGallery(); // Initialize photo gallery state
       }
 
       function handleProductFamilyChange() {
@@ -1032,8 +1681,12 @@
       }
 
       function calculatePos4_5_6(size) {
+        // Check if it's a Rail 1 size that needs mapping
+        if (rail1SizeMapping[size]) {
+          return rail1SizeMapping[size];
+        }
+        
         const sizeMap = {
-          "45": "045", "75": "075", "105": "105", "135": "135", "175": "175", "235": "235", "275": "275", "375": "375", "385": "385",
           "177": "177", "257": "257", "367": "367", "467": "467", "567": "567", "927": "927",
           "6": "006", "7": "007", "9": "009", "13":  "013", "17": "017", "20": "020", "23": "023",
           "44": "044", "64": "064", "104": "104", "164": "164"
@@ -1124,6 +1777,24 @@
 
       function calculatePos15_fromTopRail(topRailValue) {
         return topRailValue || "";
+      }
+
+      function calculatePos16(connectionPhoto) {
+        if (!connectionPhoto || !connectionPhoto.label) return "";
+        // Extract first character from label (e.g., "B08" -> "B")
+        return connectionPhoto.label.charAt(0) || "";
+      }
+
+      function calculatePos17(connectionPhoto) {
+        if (!connectionPhoto || !connectionPhoto.label) return "";
+        // Extract second character from label (e.g., "B08" -> "0")
+        return connectionPhoto.label.charAt(1) || "";
+      }
+
+      function calculatePos18(connectionPhoto) {
+        if (!connectionPhoto || !connectionPhoto.label) return "";
+        // Extract third character from label (e.g., "B08" -> "8")
+        return connectionPhoto.label.charAt(2) || "";
       }
 
       function calculatePos14(temperatureSensor) {
@@ -1248,6 +1919,14 @@
         const pos15 = calculatePos15_fromTopRail(selections.topRail);
         updatePositionBox(15, pos15);
 
+        // Connection photo affects positions 16, 17, 18
+        const pos16 = calculatePos16(selections.connectionPhoto);
+        const pos17 = calculatePos17(selections.connectionPhoto);
+        const pos18 = calculatePos18(selections.connectionPhoto);
+        updatePositionBox(16, pos16);
+        updatePositionBox(17, pos17);
+        updatePositionBox(18, pos18);
+
         const positions = [];
         for (let i = 1; i <= 18; i++) {
           const box = document.getElementById(`pos${i}`);
@@ -1255,22 +1934,104 @@
           positions.push(value === "-" ? "" : value);
         }
 
+        // Create 18-character code maintaining positions for image matching
+        const fullCode = positions.map(pos => pos || "*").join("");
+        
+        // Create display code (compressed for UI)
         const finalCode = positions.join("").replace(/^-+|-+$/g, "");
         document.getElementById('finalCode').textContent = finalCode || "Select options to generate code...  ";
 
-        const key = `${selections.productFamily}|${selections.size}`;
+        // ENHANCED IMAGE SELECTION LOGIC
         const previewImage = document.getElementById('previewImage');
-        if (specialImageMap[key]) {
-          previewImage.src = specialImageMap[key];
-          previewImage.alt = `Special image for ${key}`;
+        const selectedImage = selectImageByScenario(selections, fullCode); // Use fullCode instead of finalCode
+        
+        if (selectedImage) {
+          previewImage.src = selectedImage.path;
+          previewImage.alt = selectedImage.description;
+          console.log('Image selected:', selectedImage.method, '->', selectedImage.path);
         } else {
-          const imgPath = `/shared/images/${finalCode}.png`;
-          previewImage.src = imgPath;
-          previewImage.alt = finalCode || "Preview";
+          previewImage.src = '';
+          previewImage.alt = 'No image available';
+          console.log('No image found for current selection');
         }
 
         update3DModel(selections);
         setTimeout(() => applyAnschlussOverlay(selections), 30);
+      }
+
+      // ============================================================================
+      // 18-CHARACTER POSITION-BASED IMAGE SELECTION
+      // ============================================================================
+      function selectImageByScenario(selections, fullCode) {
+        // fullCode should already be 18 characters with proper positioning
+        console.log('Looking for image for 18-char code:', fullCode);
+        
+        // 1. Try exact 18-character match first
+        if (productCodeImageMap[fullCode]) {
+          return {
+            path: productCodeImageMap[fullCode],
+            method: 'Exact 18-Char Match',
+            description: `Image for code: ${fullCode}`
+          };
+        }
+        
+        // 2. Try pattern matching with wildcards
+        const patternMatch = find18CharPatternMatch(fullCode);
+        if (patternMatch) {
+          return {
+            path: patternMatch,
+            method: '18-Char Pattern Match', 
+            description: `Image for pattern match`
+          };
+        }
+        
+        // 3. Final fallback to generated code path (use compressed code)
+        const compressedCode = fullCode.replace(/\*/g, "");
+        if (compressedCode) {
+          return {
+            path: `/shared/images/${compressedCode}.png`,
+            method: 'Generated Code Path',
+            description: compressedCode
+          };
+        }
+        
+        return null;
+      }
+
+      // Pad product code to exactly 18 characters
+      function padTo18Characters(code) {
+        if (!code) return '******************'; // All wildcards if no code
+        
+        // Pad with '*' to reach 18 characters
+        return (code + '*'.repeat(18)).substring(0, 18);
+      }
+
+      // Find pattern matches in 18-character format
+      function find18CharPatternMatch(code) {
+        if (!code || code.length !== 18) return null;
+        
+        // Try each pattern in the mapping
+        for (const [pattern, imagePath] of Object.entries(productCodeImageMap)) {
+          if (pattern.length === 18 && matches18CharPattern(code, pattern)) {
+            console.log('Found 18-char pattern match:', pattern, 'for', code);
+            return imagePath;
+          }
+        }
+        
+        return null;
+      }
+
+      // Check if code matches pattern (with * as wildcard)
+      function matches18CharPattern(code, pattern) {
+        if (code.length !== 18 || pattern.length !== 18) return false;
+        
+        for (let i = 0; i < 18; i++) {
+          if (pattern[i] !== '*' && pattern[i] !== code[i]) {
+            return false;
+          }
+        }
+        
+        return true;
       }
 
       // Initialize when page loads
